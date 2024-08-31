@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useAuth } from "./AuthContext"; // Import useAuth
+import { useAuth } from "./AuthContext";
 import { useNavigate, useLocation } from "react-router-dom";
 
 const LoginForm = () => {
@@ -9,15 +9,20 @@ const LoginForm = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const from = location.state?.from?.pathname || "/"; // Get the previous location or default to home
+
+  // Get the previous location or default to home
+  const from = location.state?.from || "/";
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       await login(username, password);
-      navigate(from); // Redirect to the previous page after login
+
+      // Redirect to the previous page or default home page
+      navigate(from, { replace: true });
     } catch (error) {
       console.error(error);
+      setError("Failed to login.");
     }
   };
 

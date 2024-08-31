@@ -1,8 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate, useLocation, useParams } from "react-router-dom";
+import { useAuth } from "./AuthContext";
 
 const ReviewForm = () => {
+  const { user } = useAuth();
   const [rating, setRating] = useState("");
   const [comment, setComment] = useState("");
   const [error, setError] = useState("");
@@ -10,7 +12,16 @@ const ReviewForm = () => {
   const navigate = useNavigate();
   const { id } = useParams();
 
+  // Use either the state or the route params for serviceId
   const serviceId = location.state?.serviceId || id;
+
+  useEffect(() => {
+    if (!user) {
+      // Redirect to login page if not authenticated
+      navigate("/login", { state: { from: location } });
+      return;
+    }
+  });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -22,9 +33,9 @@ const ReviewForm = () => {
 
     const reviewData = {
       service: serviceId,
-      user: 1,
-      rating: rating,
-      comment: comment,
+      user: 1, // Assume user ID is 1 for now; you should replace this with the actual logged-in user ID
+      rating,
+      comment,
     };
 
     console.log("Submitting review data:", reviewData);
@@ -41,9 +52,6 @@ const ReviewForm = () => {
           },
         }
       );
-      if (response) {
-        localStorage.setItem(token);
-      }
       console.log("Review submitted successfully:", response.data);
       navigate(`/service/${serviceId}`);
     } catch (error) {

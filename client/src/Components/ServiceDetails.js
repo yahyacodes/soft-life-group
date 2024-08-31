@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { useAuth } from "./AuthContext";
 
 const ServiceDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [service, setService] = useState(null);
+  const { user } = useAuth();
 
   useEffect(() => {
     const fetchServiceDetails = async () => {
@@ -14,7 +16,6 @@ const ServiceDetails = () => {
           `http://127.0.0.1:8000/services/${id}/`
         );
         setService(response.data);
-        console.log(response.data);
       } catch (error) {
         console.error("Error fetching service details:", error);
       }
@@ -28,8 +29,13 @@ const ServiceDetails = () => {
   }
 
   const handleReviewClick = () => {
-    navigate(`/service/${id}/review`, { state: { serviceId: id } });
-    console.log(id);
+    if (!user) {
+      // If the user is not authenticated, redirect to login
+      navigate("/login", { state: { from: `/service/${id}/review` } });
+      return;
+    }
+
+    navigate(`/service/${id}/review`);
   };
 
   console.log(handleReviewClick);
@@ -92,16 +98,14 @@ const ServiceDetails = () => {
           <div className="mt-4">
             <h2 className="text-2xl font-bold mb-4">Reviews</h2>
             {service.reviews.length > 0 ? (
-              service.reviews.map((review) => (
-                <div key={review.id} className="mb-4 border-b pb-4">
+              service.reviews.map(({ id, rating, comment, created_at }) => (
+                <div key={id} className="mb-4 border-b pb-4">
                   <div className="flex items-center mb-2">
                     {[...Array(5)].map((_, index) => (
                       <svg
                         key={index}
                         className={`w-5 h-5 ${
-                          index < review.rating
-                            ? "text-yellow-400"
-                            : "text-gray-300"
+                          index < rating ? "text-yellow-400" : "text-gray-300"
                         }`}
                         fill="currentColor"
                         viewBox="0 0 20 20"
@@ -110,9 +114,9 @@ const ServiceDetails = () => {
                       </svg>
                     ))}
                   </div>
-                  <p className="text-secondary">{review.comment}</p>
+                  <p className="text-secondary">{comment}</p>
                   <p className="text-sm text-secondary">
-                    Posted on {new Date(review.created_at).toLocaleDateString()}
+                    Posted on {new Date(created_at).toLocaleDateString()}
                   </p>
                 </div>
               ))

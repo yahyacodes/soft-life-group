@@ -9,6 +9,8 @@ from django.contrib.gis.geos import Point
 from rest_framework.views import APIView
 from django.contrib.gis.db.models.functions import Distance
 import logging
+from rest_framework.decorators import api_view
+from rest_framework_simplejwt.tokens import RefreshToken
 
 logger = logging.getLogger(__name__)
 
@@ -88,9 +90,17 @@ class UserRegistrationView(APIView):
             }
             return Response(response_data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
 
-
-
-
-
-
+@api_view(['POST'])
+def verify_token(request):
+    token = request.headers.get('Authorization').split(' ')[1]
+    
+    try:
+        # Validate the token
+        RefreshToken(token)
+        # Retrieve user information
+        user = User.objects.get(username=request.user.username)
+        return Response({'username': user.username}, status=status.HTTP_200_OK)
+    except Exception as e:
+        return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
