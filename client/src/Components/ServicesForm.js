@@ -33,14 +33,20 @@ const ServicesForm = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     const data = new FormData();
+
     for (const key in formData) {
       if (formData[key] !== null) {
         data.append(key, formData[key]);
       }
     }
 
+    // Log FormData entries for debugging
+    for (let [key, value] of data.entries()) {
+      console.log(key, value);
+    }
+
     axios
-      .post("http://127.0.0.1:8000/services/services/", data, {
+      .post("http://127.0.0.1:8000/services/", data, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -50,7 +56,6 @@ const ServicesForm = () => {
         navigate("/");
       })
       .catch((error) => {
-        console.log(error.response);
         console.error("Error creating service:", error);
       });
   };
