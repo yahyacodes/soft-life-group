@@ -15,7 +15,6 @@ from rest_framework_simplejwt.tokens import RefreshToken
 logger = logging.getLogger(__name__)
 
 
-# views.py
 class ServiceViewSet(viewsets.ModelViewSet):
     permission_classes = [AllowAny]
     queryset = Service.objects.all()

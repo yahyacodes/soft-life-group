@@ -19,7 +19,7 @@ class ReviewSerializer(serializers.ModelSerializer):
 class ServiceSerializer(serializers.ModelSerializer):
     reviews = ReviewSerializer(many=True, read_only=True)
     average_rating = serializers.SerializerMethodField()
-    image = serializers.SerializerMethodField()  # Add this line
+    image = serializers.SerializerMethodField()
 
     class Meta:
         model = Service
@@ -30,12 +30,13 @@ class ServiceSerializer(serializers.ModelSerializer):
         if reviews.exists():
             return sum([review.rating for review in reviews]) / reviews.count()
         return None  # or return 0 if you prefer
-
+    
     def get_image(self, obj):
         request = self.context.get('request')
         if obj.image:
             return request.build_absolute_uri(obj.image.url)
         return None
+
 
 
 
