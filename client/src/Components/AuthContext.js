@@ -9,14 +9,25 @@ export const useAuth = () => {
 
 const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true); // Add loading state
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Retrieve user info or token from local storage
-    const storedUser = localStorage.getItem("user");
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
+    // Check if there's a token in localStorage and initialize the user
+    const accessToken = localStorage.getItem("access_token");
+
+    if (accessToken) {
+      // Fetch user details or set the user from localStorage
+      const storedUser = localStorage.getItem("user");
+      if (storedUser) {
+        setUser(JSON.parse(storedUser)); // Set the user based on localStorage
+      } else {
+        // Optionally, verify the token with the backend if needed.
+        setUser({ username: "defaultUser" }); // Set a default username or fetch
+      }
     }
+
+    setLoading(false); // Finish loading after initialization
   }, []);
 
   const login = async (username, password) => {
@@ -30,10 +41,9 @@ const AuthProvider = ({ children }) => {
       const data = await response.json();
       localStorage.setItem("access_token", data.access);
       localStorage.setItem("refresh_token", data.refresh);
-      console.log(data.access);
-      console.log(data.refresh);
-      setUser(username);
-      navigate("/");
+      localStorage.setItem("user", JSON.stringify({ username }));
+
+      setUser({ username });
     } else {
       throw new Error("Login failed");
     }
@@ -42,12 +52,15 @@ const AuthProvider = ({ children }) => {
   const logout = () => {
     localStorage.removeItem("access_token");
     localStorage.removeItem("refresh_token");
+    localStorage.removeItem("user");
     setUser(null);
+    navigate("/");
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
-      {children}
+    <AuthContext.Provider value={{ user, login, logout, loading }}>
+      {!loading && children}{" "}
+      {/* Don't render children until loading is complete */}
     </AuthContext.Provider>
   );
 };

@@ -35,7 +35,7 @@ const ServiceDetails = () => {
       return;
     }
 
-    navigate(`/service/${id}/review`);
+    navigate(`/service/${id}/review`, { state: { serviceId: id } });
   };
 
   console.log(handleReviewClick);

@@ -62,21 +62,34 @@ class UserSerializer(serializers.ModelSerializer):
     
 
 class UserRegisterSerializer(serializers.ModelSerializer):
-    username = serializers.CharField(source='user.username')
-    email = serializers.EmailField(source='user.email')
     password = serializers.CharField(write_only=True)
     is_service_provider = serializers.BooleanField()
 
     class Meta:
         model = UserRegister
-        fields = ['id', 'username', 'email', 'password', 'is_service_provider']
+        fields = ['id', 'user', 'is_service_provider', 'password']
 
     def create(self, validated_data):
-        user_data = validated_data.pop('user', {})
+        # Extract the password from the validated data
+        password = validated_data.pop('password')
+        is_service_provider = validated_data.pop('is_service_provider')
+
+        # Create the User object
         user = User.objects.create_user(
-            username=user_data.get('username'),
-            email=user_data.get('email'),
-            password=validated_data.pop('password')
+            username=validated_data.get('user').get('username'),
+            email=validated_data.get('user').get('email'),
+            password=password
         )
-        user_register = UserRegister.objects.create(user=user, **validated_data)
+
+        # Create the UserRegister object
+        user_register = UserRegister.objects.create(
+            user=user,
+            is_service_provider=is_service_provider
+        )
         return user_register
+
+    def validate(self, data):
+    # Example of adding custom validation logic
+        if User.objects.filter(email=data['email']).exists():
+            raise serializers.ValidationError({"email": "Email already exists"})
+        return data

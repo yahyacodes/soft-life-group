@@ -81,14 +81,17 @@ class UserRegistrationView(APIView):
     def post(self, request):
         serializer = UserRegisterSerializer(data=request.data)
         if serializer.is_valid():
-            user_register = serializer.save()
-            response_data = {
-                'id': user_register.user.id,
-                'username': user_register.user.username,
-                'email': user_register.user.email,
-                'is_service_provider': user_register.is_service_provider
-            }
-            return Response(response_data, status=status.HTTP_201_CREATED)
+            try:
+                user_register = serializer.save()
+                response_data = {
+                    'id': user_register.user.id,
+                    'username': user_register.user.username,
+                    'email': user_register.user.email,
+                    'is_service_provider': user_register.is_service_provider
+                }
+                return Response(response_data, status=status.HTTP_201_CREATED)
+            except Exception as e:
+                return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 

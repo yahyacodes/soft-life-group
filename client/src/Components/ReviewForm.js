@@ -26,6 +26,8 @@ const ReviewForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    console.log(serviceId);
+
     if (!serviceId) {
       setError("Service ID is missing.");
       return;

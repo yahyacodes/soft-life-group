@@ -1,19 +1,43 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
+import { AuthContext } from "./AuthContext";
 
 // Profile Dropdown
 const ProfileDropDown = () => {
   const [state, setState] = useState(false);
+  const { user, logout } = useContext(AuthContext);
 
   return (
     <div className="flex items-center space-x-4">
-      <a href="/login">Login</a>
+      {user ? (
+        <>
+          <button
+            onClick={logout}
+            className="bg-blue-600 rounded-full py-2 px-6 text-white font-medium"
+          >
+            Logout
+          </button>{" "}
+          {/* Logout button */}
+        </>
+      ) : (
+        <>
+          <a href="/login">Login</a>
+          <a
+            href="/signup"
+            className="bg-blue-600 rounded-full py-2 px-6 text-white font-medium"
+            onClick={() => setState(!state)}
+          >
+            Signup
+          </a>
+        </>
+      )}
+      {/* <a href="/login">Login</a>
       <a
         href="/signup"
         className="bg-blue-600 rounded-full py-2 px-6 text-white font-medium"
         onClick={() => setState(!state)}
       >
         Signup
-      </a>
+      </a> */}
     </div>
   );
 };

@@ -7,7 +7,7 @@ const SignupForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [userType, setUserType] = useState("regular");
+  const [isServiceProvider, setIsServiceProvider] = useState(false); // Added state for user type
   const [error, setError] = useState("");
 
   const navigate = useNavigate();
@@ -21,23 +21,19 @@ const SignupForm = () => {
     }
 
     try {
-      const response = await axios.post(
-        "http://127.0.0.1:8000/services/register/",
-        {
-          username,
-          email,
-          password,
-          is_service_provider: userType === "service_provider", // Ensure this is correctly evaluated
-        }
-      );
+      const response = await axios.post("http://127.0.0.1:8000/register/", {
+        username,
+        email,
+        password,
+        is_service_provider: isServiceProvider, // Send user type as boolean
+      });
 
       if (response.status === 201) {
-        const isServiceProvider = response.data.is_service_provider;
-        console.log(isServiceProvider);
-        if (isServiceProvider) {
-          navigate("/services/create");
+        const { is_service_provider } = response.data;
+        if (is_service_provider) {
+          navigate("/services/create"); // Redirect to add service page
         } else {
-          navigate("/login");
+          navigate("/login"); // Redirect to login page for regular users
         }
       }
     } catch (err) {
@@ -82,15 +78,18 @@ const SignupForm = () => {
           className="w-full border rounded px-3 py-2 mb-4"
           required
         />
-        <select
-          value={userType}
-          onChange={(e) => setUserType(e.target.value)}
-          className="w-full border rounded px-3 py-2 mb-4"
-          required
-        >
-          <option value="regular">User</option>
-          <option value="service_provider">Service Provider</option>
-        </select>
+
+        {/* New checkbox for service provider registration */}
+        <label className="block mb-4">
+          <input
+            type="checkbox"
+            checked={isServiceProvider}
+            onChange={(e) => setIsServiceProvider(e.target.checked)}
+            className="mr-2"
+          />
+          Register as Service Provider
+        </label>
+
         <p className="text-xs">
           Have an account{" "}
           <a href="/login" className="text-blue-500 text-xs">
