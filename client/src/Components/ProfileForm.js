@@ -32,7 +32,7 @@ const ProfileForm = () => {
     }
 
     axios
-      .post("http://127.0.0.1:8000/profiles/", data, {
+      .post("https://soft-life-group-1.onrender.com/profiles/", data, {
         headers: {
           "Content-Type": "multipart/form-data",
         },

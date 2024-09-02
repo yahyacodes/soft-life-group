@@ -46,7 +46,7 @@ const ServicesForm = () => {
     }
 
     axios
-      .post("http://127.0.0.1:8000/services/", data, {
+      .post("https://soft-life-group-1.onrender.com/services/", data, {
         headers: {
           "Content-Type": "multipart/form-data",
         },

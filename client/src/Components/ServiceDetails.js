@@ -13,7 +13,7 @@ const ServiceDetails = () => {
     const fetchServiceDetails = async () => {
       try {
         const response = await axios.get(
-          `http://127.0.0.1:8000/services/${id}/`
+          `https://soft-life-group-1.onrender.com/services/${id}/`
         );
         setService(response.data);
       } catch (error) {

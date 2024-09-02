@@ -27,7 +27,7 @@ SECRET_KEY = 'django-insecure-ax6#d*^@k-hgpq0oqcm1s%(sg6%o#3y3mpat%u6n+r(9*hteia
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['']
+ALLOWED_HOSTS = ['https://soft-life-group-1.onrender.com']
 
 
 # Application definition
@@ -67,7 +67,7 @@ REST_FRAMEWORK = {
 
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
+    "https://soft-life-group-1.onrender.com",
 ]
 
 ROOT_URLCONF = 'soft_life_group.urls'

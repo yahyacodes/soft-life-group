@@ -10,7 +10,7 @@ const Services = () => {
 
   useEffect(() => {
     axios
-      .get("http://127.0.0.1:8000/services/")
+      .get("https://soft-life-group-1.onrender.com/services/")
       .then((response) => {
         setServices(response.data);
         console.log(response.data);
