@@ -27,7 +27,12 @@ SECRET_KEY = 'django-insecure-ax6#d*^@k-hgpq0oqcm1s%(sg6%o#3y3mpat%u6n+r(9*hteia
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['https://soft-life-group-1.onrender.com']
+ALLOWED_HOSTS = [
+    'soft-life-group-1.onrender.com',
+    'localhost',
+    '127.0.0.1',
+]
+
 
 
 # Application definition
